@@ -32,7 +32,7 @@ public class Company
         Document = RegexHelper.ProcessRegex(lines, _regexCnpj, ValidatorHelper.IsCnpj);
     }
 
-    private void SetName(string[] lines)
+    private void SetName(IReadOnlyList<string> lines)
     {
         foreach (var regex in _regexName)
         {

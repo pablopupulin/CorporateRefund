@@ -23,7 +23,7 @@ public class Receip
     public Company Company { get; set; }
     public Client Client { get; set; }
     public Products Products { get; set; }
-    public string Data { get; set; }
+    public string Date { get; set; }
     public decimal Total { get; set; }
     public string TextReceip { get; set; }
 
@@ -39,7 +39,7 @@ public class Receip
         Products = new Products(lines);
 
         SetTotal(lines);
-        SetData(lines);
+        SetDate(lines);
     }
 
     public Receip()
@@ -48,13 +48,14 @@ public class Receip
 
     private void SetTotal(string[] lines)
     {
-        var result = RegexHelper.ProcessRegex(lines, _regexTotal);
+        var line = JoinLines(lines);
+        var result = RegexHelper.ProcessRegex(line, _regexTotal);
         Total = RegexHelper.TryGetDecimal(result);
     }
 
-    private void SetData(string[] lines)
+    private void SetDate(string[] lines)
     {
-        Data = RegexHelper.ProcessRegex(lines, _regexDate);
+        Date = RegexHelper.ProcessRegex(lines, _regexDate);
     }
 
     private static string[] PreProcessText(string text)
@@ -153,6 +154,11 @@ public class Receip
         } while (replaceAgain);
 
         return text.Split("\n");
+    }
+
+    private static string JoinLines(string[] lines)
+    {
+        return string.Join(" ", lines);
     }
 
 }

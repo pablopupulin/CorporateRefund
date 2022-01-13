@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Domain.Receip;
 
@@ -13,7 +14,7 @@ public class Products : List<Product>
     };
 
 
-    public Products(string[] lines)
+    public Products(IEnumerable<string> lines)
     {
         SetItems(lines);
     }
@@ -22,7 +23,7 @@ public class Products : List<Product>
     {
     }
 
-    private void SetItems(string[] lines)
+    private void SetItems(IEnumerable<string> lines)
     {
         foreach (var line in lines)
         {
@@ -34,14 +35,31 @@ public class Products : List<Product>
                     continue;
 
                 var value = match.Groups[0].Value;
-                if (!string.IsNullOrEmpty(value))
+                if (string.IsNullOrEmpty(value))
+                    continue;
+
+                var split = value.Split(" ");
+
+                if (split.Length < 4)
+                    continue;
+
+                var productName = new StringBuilder(split[2]);
+
+                foreach (var s in split[3..])
                 {
-                    Add(new Product
-                    {
-                        Name = value
-                    } );
-                    break;
+                    if (int.TryParse(s, out _))
+                        break;
+
+                    productName.Append(" ");
+                    productName.Append(s);
                 }
+
+                Add(new Product
+                {
+                    Name = productName.ToString()
+                });
+
+                break;
             }
         }
     }
